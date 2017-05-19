@@ -264,7 +264,7 @@ S3Zipper.prototype = {
                 s3FolderName:arguments[0]
                 ,startKey:arguments[1]
                 ,s3ZipFileName:arguments[2]
-                ,recursive: false
+                ,recursive: true
             };
             callback= arguments[3];
         }
