@@ -264,13 +264,15 @@ S3Zipper.prototype = {
                 s3FolderName:arguments[0]
                 ,startKey:arguments[1]
                 ,s3ZipFileName:arguments[2]
-                ,recursive: true
+                ,recursive: false
             };
             callback= arguments[3];
         }
 
         var t = this;
-        params.zipFileName = '__' + Date.now() + '.zip';
+        if (!params.zipFileName) {
+          params.zipFileName = '__' + Date.now() + '.zip';
+        }
 
         if (params.s3ZipFileName.indexOf('/') < 0)
             params.s3ZipFileName = params.s3FolderName + "/" + params.s3ZipFileName;
@@ -330,7 +332,9 @@ S3Zipper.prototype = {
 
         var t = this;
         ///local file
-        params.zipFileName = '__' + Date.now() + '.zip';
+        if (!params.zipFileName) {
+          params.zipFileName= '__' + Date.now() + '.zip';
+        }
 
         if (params.s3ZipFileName.indexOf('/') < 0)
             params.s3ZipFileName = params.s3FolderName + "/" + params.s3ZipFileName;
