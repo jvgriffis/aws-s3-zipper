@@ -175,7 +175,7 @@ S3Zipper.prototype = {
             else {
                 var files = clearedFiles.files;
                 console.log("files", files);
-                async.map(files, function (f, callback) {
+                async.mapLimit(files, 10, function (f, callback) {
                     t.s3bucket.getObject({Bucket: t.awsConfig.bucket, Key: f.Key}, function (err, data) {
                         if (err)
                             callback(err);
