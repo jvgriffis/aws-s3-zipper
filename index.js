@@ -105,6 +105,7 @@ S3Zipper.prototype = {
         var emitter = client.listObjects(realParams);
         emitter.on('data', function (data) {
             if(data && data.Contents) {
+                data.Contents = data.Contents.filter(content => !content.Key.includes('.zip'));
                 files.Contents = files.Contents.concat(data.Contents);
             }
         });
@@ -174,7 +175,6 @@ S3Zipper.prototype = {
                 console.error(err);
             else {
                 var files = clearedFiles.files;
-                var files = files.filter(file => !file.Key.includes('.zip'))
                 console.log("files", files);
                 async.mapLimit(files, 10, function (f, callback) {
                     t.s3bucket.getObject({Bucket: t.awsConfig.bucket, Key: f.Key}, function (err, data) {
