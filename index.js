@@ -183,11 +183,13 @@ S3Zipper.prototype = {
 
                             var name = t.calculateFileName(f);
 
-                            if (name === "" || name.includes('.zip')){
+                            if (name === ""){
                                 callback(null, f);
                                 return;
-                            }
-                            else {
+                            } else if (name.includes('.zip')) {
+                                callback(null, null);
+                                return;
+                            } else {
                                 console.log('zipping ', name, '...');
 
                                 zip.append(data.Body, {name: name});
