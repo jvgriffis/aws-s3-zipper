@@ -120,6 +120,7 @@ S3Zipper.prototype = {
         var emitter = client.listObjects(realParams);
         emitter.on('data', function (data) {
             if(data && data.Contents) {
+                data.Contents = data.Contents.filter(content => !content.Key.includes('.zip'));
                 files.Contents = files.Contents.concat(data.Contents);
             }
         });
@@ -190,7 +191,7 @@ S3Zipper.prototype = {
             else {
                 var files = clearedFiles.files;
                 console.log("files", files);
-                async.map(files, function (f, callback) {
+                async.mapLimit(files, 10, function (f, callback) {
                     t.s3bucket.getObject({Bucket: t.awsConfig.bucket, Key: f.Key}, function (err, data) {
                         if (err)
                             callback(err);
@@ -201,8 +202,7 @@ S3Zipper.prototype = {
                             if (name === ""){
                                 callback(null, f);
                                 return;
-                            }
-                            else {
+                            } else {
                                 console.log('zipping ', name, '...');
 
                                 zip.append(data.Body, {name: name});
@@ -285,7 +285,9 @@ S3Zipper.prototype = {
         }
 
         var t = this;
-        params.zipFileName = '__' + Date.now() + '.zip';
+        if (!params.zipFileName) {
+          params.zipFileName = '__' + Date.now() + '.zip';
+        }
 
         if (params.s3ZipFileName.indexOf('/') < 0)
             params.s3ZipFileName = params.s3FolderName + "/" + params.s3ZipFileName;
@@ -345,7 +347,9 @@ S3Zipper.prototype = {
 
         var t = this;
         ///local file
-        params.zipFileName = '__' + Date.now() + '.zip';
+        if (!params.zipFileName) {
+          params.zipFileName= '__' + Date.now() + '.zip';
+        }
 
         if (params.s3ZipFileName.indexOf('/') < 0)
             params.s3ZipFileName = params.s3FolderName + "/" + params.s3ZipFileName;
